@@ -137,6 +137,7 @@ using (var serviceScope = app.Services.CreateScope())
     {
         context.Orders.Add(new DemoProject.Domain.Entities.Order
         {
+            Id=Guid.Parse("0197deeb-9552-7339-b485-4ee68efaa786"),
             Amount = 1000,
             CreatedAt = DateTime.UtcNow,
             Status = DemoProject.Domain.Enums.EOrderStatus.Created,

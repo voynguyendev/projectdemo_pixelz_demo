@@ -1,6 +1,16 @@
-version: '3.8'
+
 
 services:
+  postgresdb:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: pixelz_demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   apigateway:
     build:
       context: .
@@ -8,14 +18,16 @@ services:
     ports:
       -  "6000:6000"
     environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=pixelz_demo;Username=postgres;Password=123456
+      - ConnectionStrings__DefaultConnection=Host=postgresdb;Port=5432;Database=pixelz_demo;Username=postgres;Password=123456
       - GrpcServer__ProductService__Address=http://productionservice:6001
       - GrpcServer__EmailService__Address=http://emailservice:6002
       - GrpcServer__PaymentService__Address=http://paymentservice:6003
       - ASPNETCORE_URLS=http://+:6000
     depends_on:
-      - postgres
+      - postgresdb
       - productionservice
+      - emailservice
+      - paymentservice
 
   productionservice:
     build:
@@ -43,16 +55,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:6003
 
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: pixelz_demo
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+  
 
 volumes:
   pgdata:
