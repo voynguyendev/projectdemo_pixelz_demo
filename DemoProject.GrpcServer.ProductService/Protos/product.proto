@@ -1,0 +1,19 @@
+
+
+syntax = "proto3";
+
+option csharp_namespace = "DemoProject.GrpcServer.ProductService";
+
+package productservice;
+
+service ProductionService {
+    rpc PushOrder (PushOrderRequest) returns (PushOrderResponse);
+}
+message PushOrderRequest {
+    string order_id = 1;
+}
+message PushOrderResponse {
+    bool success = 1;
+    string message = 2;
+}
+

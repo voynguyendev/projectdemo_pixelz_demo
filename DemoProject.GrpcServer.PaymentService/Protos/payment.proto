@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "DemoProject.GrpcServer.PaymentService";
+
+package paymentservice;
+
+service PaymentService {
+    rpc ProcessPayment (ProcessPaymentRequest) returns (ProcessPaymentResponse);
+}
+message ProcessPaymentRequest {
+    string order_id = 1;
+}
+message ProcessPaymentResponse {
+    bool success = 1;
+    string message = 2;
+}

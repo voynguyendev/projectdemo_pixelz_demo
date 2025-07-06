@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  apigateway:
+    build:
+      context: .
+      dockerfile: DemoProject.ApiGateway/Dockerfile
+    ports:
+      -  "6000:6000"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=pixelz_demo;Username=postgres;Password=123456
+      - GrpcServer__ProductService__Address=http://productionservice:6001
+      - GrpcServer__EmailService__Address=http://emailservice:6002
+      - GrpcServer__PaymentService__Address=http://paymentservice:6003
+      - ASPNETCORE_URLS=http://+:6000
+    depends_on:
+      - postgres
+      - productionservice
+
+  productionservice:
+    build:
+      context: .
+      dockerfile: DemoProject.GrpcServer.ProductService/Dockerfile
+    ports:
+      -  "6001:6001"
+    environment:
+      - ASPNETCORE_URLS=http://+:6001
+
+  emailservice:
+    build:
+      context: .
+      dockerfile: DemoProject.GrpcServer.EmailService/Dockerfile
+    ports:
+      -  "6002:6002"
+    environment:
+      - ASPNETCORE_URLS=http://+:6002
+  paymentservice:
+    build:
+      context: .
+      dockerfile: DemoProject.GrpcServer.PaymentService/Dockerfile
+    ports:
+      -  "6003:6003"
+    environment:
+      - ASPNETCORE_URLS=http://+:6003
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: pixelz_demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
